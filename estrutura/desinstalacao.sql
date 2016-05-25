@@ -1,0 +1,6 @@
+drop table plugins.fundamentacaolegal;
+drop SEQUENCE plugins.fundamentacaolegal_sequencial_seq;
+drop table plugins.fundamentacaolegaldesdobramentos;
+drop SEQUENCE plugins.fundamentacaolegaldesdobramentos_sequencial_seq;
+drop table plugins.empautorizafundamentacaolegal;
+drop SEQUENCE plugins.empautorizafundamentacaolegal_sequencial_seq;

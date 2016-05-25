@@ -1,0 +1,105 @@
+<?xml version="1.0" standalone="yes" ?>
+<table name="plugins.fundamentacaolegaldesdobramentos" description="Armazena os desdobramentos da fundamentação legal" prefix="" label="Desdobramentos da Fundamentação Legal" type="0">
+  <fields>
+    <field name="sequencial"
+           conteudo="int4"
+           description="Sequencial"
+           inivalue="0"
+           label="Sequencial"
+           size="10"
+           null="f"
+           uppercase="f"
+           autocompl="f"
+           aceitatipo="1"
+           tipoobj="text"
+           labelrel="Sequencial"
+           reference=""
+           ispk="t"
+           hassequence="t">
+      <sequence name="plugins.fundamentacaolegaldesdobramentos_sequencial_seq"></sequence>
+    </field>
+    <field name="orgao"
+           conteudo="int4"
+           description="Orgao"
+           inivalue="0"
+           label="Orgao"
+           size="10"
+           null="f"
+           uppercase="f"
+           autocompl="f"
+           aceitatipo="1"
+           tipoobj="text"
+           labelrel="Orgao"
+           reference=""
+           ispk="f"
+           hassequence="f">
+    </field>
+    <field name="unidade"
+           conteudo="int4"
+           description="Unidade"
+           inivalue="0"
+           label="Unidade"
+           size="10"
+           null="f"
+           uppercase="f"
+           autocompl="f"
+           aceitatipo="1"
+           tipoobj="text"
+           labelrel="Unidade"
+           reference=""
+           ispk="f"
+           hassequence="f">
+    </field>
+    <field name="fundamentacaolegal"
+           conteudo="int4"
+           description="Fundamentacao Legal"
+           inivalue="0"
+           label="Fundamentacao Legal"
+           size="10"
+           null="f"
+           uppercase="f"
+           autocompl="f"
+           aceitatipo="1"
+           tipoobj="text"
+           labelrel="Fundamentacao Legal"
+           reference=""
+           ispk="f"
+           hassequence="f">
+    </field>
+    <field name="orcelemento"
+           conteudo="int4"
+           description="Elemento"
+           inivalue="0"
+           label="Elemento"
+           size="10"
+           null="f"
+           uppercase="f"
+           autocompl="f"
+           aceitatipo="1"
+           tipoobj="text"
+           labelrel="Elemento"
+           reference=""
+           ispk="f"
+           hassequence="f">
+    </field>
+        <field name="valorlimite"
+           conteudo="numeric"
+           description="Valor Limite"
+           inivalue="0"
+           label="Valor Limite"
+           size="10"
+           null="f"
+           uppercase="f"
+           autocompl="f"
+           aceitatipo="4"
+           tipoobj="text"
+           labelrel="Valor Limite"
+           reference=""
+           ispk="f"
+           hassequence="f">
+    </field>    
+  </fields>
+  <primarykey>
+    <fieldpk name="sequencial"></fieldpk>
+  </primarykey>
+</table>
