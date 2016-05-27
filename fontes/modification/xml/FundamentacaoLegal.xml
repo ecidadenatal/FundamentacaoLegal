@@ -205,7 +205,8 @@
 
       if(!empty($totalEmpenhadoFundamentacao) && !empty($valorLimiteFundamentacao) && ($totalEmpenhadoFundamentacao > $valorLimiteFundamentacao)) {
         $sqlerro = true;
-        $erro_msg = "O valor do empenho excede o limite para esta fundamentação.";
+        $erro_msg = "Não será possível empenhar a despesa, tendo em vista que o limite para o exercício já foi
+atingido.";
       }
     }]]>
       </add>
