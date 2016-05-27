@@ -37,7 +37,7 @@
             /*
              * alterado para liberar o campo tipo licitacao para alteracao
              */
-            db_selectrecord("e54_tipol",$result,true,isset($emprocesso)&&$emprocesso==true?"1":"1","","","");
+            db_selectrecord("e54_tipol",$result,true,isset($emprocesso)&&$emprocesso==true?"1":"1","onload='js_reload(this.value);'","","","","js_reload(this.value);");
             $dop = $db_opcao;
           } else {
 
