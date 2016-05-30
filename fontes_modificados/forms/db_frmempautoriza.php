@@ -24,6 +24,7 @@
  *  Copia da licenca no diretorio licenca/licenca_en.txt
  *                                licenca/licenca_pt.txt
  */
+
 //MODULO: empenho
 $clempautoriza->rotulo->label();
 $clrotulo = new rotulocampo;
@@ -51,14 +52,14 @@ db_app::load("DBFormCache.js");
   #e57_codhistdescr,
   #e54_codtipodescr,
   #e54_codcomdescr,
-  #fundamentacaolegaldescr {
+  #fundamentacaolegaldescr  {
     width: 400px;
   }
   #e57_codhist,
   #e54_codtipo,
   #e54_tipol,
   #e54_codcom,
-  #fundamentacaolegal {
+  #fundamentacaolegal  {
     width: 50px;
   }
   #e44_tipo{
@@ -97,53 +98,39 @@ db_app::load("DBFormCache.js");
       ?>
     </td>
   </tr>
+  
   <tr>
     <td nowrap title="<?=@$Te54_tipol?>">
       <strong>Tipo de Licitação:</strong>
     </td>
     <td>
       <?
-        if (isset($tipocompra) || isset($e54_codcom)) {
-
-          if (isset($e54_codcom) && empty($tipocompra)) {
-            $tipocompra=$e54_codcom;
-          }
-
-          $result=$clcflicita->sql_record($clcflicita->sql_query_file(null,"l03_tipo,l03_descr",'',"l03_codcom=$tipocompra and l03_instit = ".db_getsession('DB_instit')));
+          $result=$clcflicita->sql_record($clcflicita->sql_query_file(null,"l03_codigo,l03_descr",'',"l03_instit = ".db_getsession('DB_instit')));
           if ($clcflicita->numrows > 0) {
             /*
              * alterado para liberar o campo tipo licitacao para alteracao
              */
-            db_selectrecord("e54_tipol",$result,true,isset($emprocesso)&&$emprocesso==true?"1":"1","","","");
+            db_selectrecord("e54_tipol",$result,true,isset($emprocesso)&&$emprocesso==true?"1":"1","onload='js_reload(this.value);'","","","","js_reload(this.value);");
             $dop = $db_opcao;
           } else {
 
             $e54_tipol  = '';
             $e54_numerl = '';
             $dop        = '3';
-            db_input('e54_tipol',8,$Ie54_tipol,true,'text',3);
+            db_input('e54_tipol',8,$Ie54_tipol,true,'text',3, "onchange='js_reload(this.value);'");
           }
-        } else {
-
-          $dop        = '3';
-          $e54_tipol  = '';
-          $e54_numerl = '';
-          db_input('e54_tipol',8,$Ie54_tipol,true,'text',3);
-        }
       ?>
       <strong>Número da Licitação:</strong>
       <? db_input('e54_numerl', 7,$Ie54_numerl,true,'text',isset($emprocesso)&&$emprocesso==true?"1":$dop); ?>
     </td>
   </tr>
-  
   <tr>
     <td nowrap title="<?=@$Te54_codcom?>">
        <strong>Tipo de Compra:</strong>
     </td>
     <td>
       <?php
-      //@todo alterar para buscar o tipo de compra de acordo com o que está configurado no tipo de licitação
-      //desabilitar o campo para alteração
+
         if(isset($e54_codcom) && $e54_codcom==''){
           $pc50_descr='';
         }
@@ -160,7 +147,10 @@ db_app::load("DBFormCache.js");
        /*
         * alterado para liberar o campo tipo de compra para alteracao
         */
-        $result = $clpctipocompra->sql_record($clpctipocompra->sql_query_file(null,"pc50_codcom as e54_codcom,pc50_descr"));
+        $result = $clpctipocompra->sql_record($clpctipocompra->sql_query_file(null,"pc50_codcom as e54_codcom,pc50_descr", null, "pc50_codcom in (select l03_codcom from cflicita where l03_codigo = '{$e54_tipol}')"));
+        if (!isset($e54_tipol)) {
+          $result = $clpctipocompra->sql_record($clpctipocompra->sql_query_file(null,"pc50_codcom as e54_codcom,pc50_descr"));
+        }
         db_selectrecord("e54_codcom",$result,true,isset($emprocesso)&&$emprocesso==true?"1":$db_opcao,"","","","","js_reload(this.value)");
       ?>
     </td>
@@ -226,7 +216,18 @@ db_app::load("DBFormCache.js");
           }
           $arr[$tipo] = $e44_descr;
         }
-        db_select("e44_tipo", $arr, true, 1);
+                db_select("e44_tipo", $arr, true, 1, "onload='js_verificaEvento();' onchange='js_verificaEvento();'");
+      ?>
+    </td>
+  </tr>
+  <tr id="tomador" style="display: none">
+    <td><strong>Tomador de Suprimento:</strong></td>
+    <td>
+      <?
+        $oDaoTomadorSuprimento = db_utils::getDao("tomadorsuprimento");
+        $result = $oDaoTomadorSuprimento->sql_record($oDaoTomadorSuprimento->sql_tomador_depto("sequencial, z01_numcgm || '-' || z01_nome", db_getsession('DB_coddepto')));
+        db_selectrecord("tomadorsuprimento", $result, true, 1);
+      
       ?>
     </td>
   </tr>
@@ -254,6 +255,19 @@ db_app::load("DBFormCache.js");
     ?>
     </td>
   </tr>
+  <tr id='fundamentacao'>
+    <td> <b>Fundamentação Legal:</b></td>
+    <td>
+      <?
+        $oDaoFundamentacaoLegal = db_utils::getDao("fundamentacaolegal");
+        $rsFundamentacaoLegal = $oDaoFundamentacaoLegal->sql_record($oDaoFundamentacaoLegal->sql_query_file(null, "sequencial,descricao", null, "modalidade = (select l03_codigo from cflicita where l03_instit = ".db_getsession("DB_instit")." and l03_codigo = '{$e54_tipol}')"));
+        if (!isset($e54_tipol)) {
+          $rsFundamentacaoLegal = $oDaoFundamentacaoLegal->sql_record($oDaoFundamentacaoLegal->sql_query_file(null, "sequencial,descricao"));
+        }
+        db_selectrecord("fundamentacaolegal", $rsFundamentacaoLegal, true, isset($emprocesso)&&$emprocesso==true?"3":"1");
+      ?> 
+    </td>
+  </tr>
 <?
   $anousu = db_getsession("DB_anousu");
   if ($anousu > 2007) {
@@ -266,6 +280,10 @@ db_app::load("DBFormCache.js");
     </td>
     <td nowrap="nowrap">
       <?
+        
+        if (!isset($e54_concarpeculiar)) { 
+          $e54_concarpeculiar = "000"; 
+        } 
         db_input("e54_concarpeculiar",10,$Ie54_concarpeculiar,true,"text",isset($emprocesso)&&$emprocesso==true?"3":$db_opcao,"onChange='js_pesquisae54_concarpeculiar(false);'");
         db_input("c58_descr", 47, 0, true, "text", 3);
       ?>
@@ -274,22 +292,13 @@ db_app::load("DBFormCache.js");
 <?
  } else {
    $e54_concarpeculiar = 0;
-   db_input("e54_concarpeculiar",10,0,true,"hidden",3,"");
+   
+        if (!isset($e54_concarpeculiar)) { 
+          $e54_concarpeculiar = "000"; 
+        } 
+        db_input("e54_concarpeculiar",10,0,true,"hidden",3,"");
  }
 ?>
-
-  <tr>
-    <td> <b>Fundamentação Legal:</b></td>
-    <td>
-      <?
-        //@todo criar RPC para fundamentacao legal ou submitar o formulário para que 
-        //quando alterado o Tipo de Licitação irá chamar as fundamentações do RPC ou buscar na base de dados as fundamentações do tipo de licitação 
-        $oDaoFundamentacaoLegal = db_utils::getDao("fundamentacaolegal");
-        $rsFundamentacaoLegal = $oDaoFundamentacaoLegal->sql_record($oDaoFundamentacaoLegal->sql_query_file(null, "sequencial,descricao"));
-        db_selectrecord("fundamentacaolegal", $rsFundamentacaoLegal, true, isset($emprocesso)&&$emprocesso==true?"3":"1");
-      ?> 
-    </td>
-  </tr>
   <tr>
     <td nowrap title="<?=@$Te54_resumo?>" colspan="2">
       <fieldset>
@@ -337,17 +346,24 @@ db_app::load("DBFormCache.js");
 </form>
 <script>
 
+window.onload = function () {
+  js_verificaEvento();
+  document.form1.e54_concarpeculiar.value = "000";
+}
+
 var db_opcao = <?php echo $db_opcao; ?>;
 
 var oDBFormCache = new DBFormCache('oDBFormCache', 'db_frmempautoriza.php');
 
 oDBFormCache.setElements( new Array ( $('e54_codtipo')       ,
+                                      $('fundamentacaolegal'),
                                       $('e54_codtipodescr')  ,
                                       $('e57_codhist')       ,
                                       $('e57_codhistdescr')  ,
                                       $('e54_concarpeculiar'),
                                       $('c58_descr')         ,
-                                      $('e44_tipo')
+                                                                            $('e44_tipo')          ,
+                                      $('tomadorsuprimento')
                          ));
 
 
@@ -355,6 +371,14 @@ if (db_opcao == 1) {
   oDBFormCache.load();
   oDBFormCache.save();
 }
+function js_verificaEvento() {
+  if (document.form1.e44_tipo.value == 4) {
+    document.getElementById('tomador').style.display = 'table-row';
+    return;
+  }
+  document.getElementById('tomador').style.display = 'none';
+}
+
 
 function js_salvaCache(){
 
@@ -417,7 +441,7 @@ function js_reload(valor){
   obj=document.createElement('input');
   obj.setAttribute('name','tipocompra');
   obj.setAttribute('type','hidden');
-  obj.setAttribute('value',valor);
+    obj.setAttribute('value',document.form1.e54_codcom.value);
   document.form1.appendChild(obj);
   document.form1.submit();
 }

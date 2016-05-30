@@ -32,7 +32,7 @@
     </td>
     <td>
       <?
-          $result=$clcflicita->sql_record($clcflicita->sql_query_file(null,"l03_tipo,l03_descr",'',"l03_instit = ".db_getsession('DB_instit')));
+          $result=$clcflicita->sql_record($clcflicita->sql_query_file(null,"l03_codigo,l03_descr",'',"l03_instit = ".db_getsession('DB_instit')));
           if ($clcflicita->numrows > 0) {
             /*
              * alterado para liberar o campo tipo licitacao para alteracao
@@ -58,7 +58,7 @@
     <operation>
       <search regex="true"><![CDATA[\$res.*\$clpctipocompra.*pc50_descr\"\)\);]]></search>
       <add>
-        <![CDATA[$result = $clpctipocompra->sql_record($clpctipocompra->sql_query_file(null,"pc50_codcom as e54_codcom,pc50_descr", null, "pc50_codcom in (select l03_codcom from cflicita where l03_tipo = '{$e54_tipol}')"));
+        <![CDATA[$result = $clpctipocompra->sql_record($clpctipocompra->sql_query_file(null,"pc50_codcom as e54_codcom,pc50_descr", null, "pc50_codcom in (select l03_codcom from cflicita where l03_codigo = '{$e54_tipol}')"));
         if (!isset($e54_tipol)) {
           $result = $clpctipocompra->sql_record($clpctipocompra->sql_query_file(null,"pc50_codcom as e54_codcom,pc50_descr"));
         }]]>
@@ -74,7 +74,10 @@
     <td>
       <?
         $oDaoFundamentacaoLegal = db_utils::getDao("fundamentacaolegal");
-        $rsFundamentacaoLegal = $oDaoFundamentacaoLegal->sql_record($oDaoFundamentacaoLegal->sql_query_file(null, "sequencial,descricao"));
+        $rsFundamentacaoLegal = $oDaoFundamentacaoLegal->sql_record($oDaoFundamentacaoLegal->sql_query_file(null, "sequencial,descricao", null, "modalidade = (select l03_codigo from cflicita where l03_instit = ".db_getsession("DB_instit")." and l03_codigo = '{$e54_tipol}')"));
+        if (!isset($e54_tipol)) {
+          $rsFundamentacaoLegal = $oDaoFundamentacaoLegal->sql_record($oDaoFundamentacaoLegal->sql_query_file(null, "sequencial,descricao"));
+        }
         db_selectrecord("fundamentacaolegal", $rsFundamentacaoLegal, true, isset($emprocesso)&&$emprocesso==true?"3":"1");
       ?> 
     </td>
@@ -205,8 +208,9 @@
 
       if(!empty($totalEmpenhadoFundamentacao) && !empty($valorLimiteFundamentacao) && ($totalEmpenhadoFundamentacao > $valorLimiteFundamentacao)) {
         $sqlerro = true;
+        $saldoDisponivel = $valorLimiteFundamentacao - ($totalEmpenhadoFundamentacao - $e60_vlremp);
         $erro_msg = "Não será possível empenhar a despesa, tendo em vista que o limite para o exercício já foi
-atingido.";
+atingido. Saldo restante: ".$saldoDisponivel;;
       }
     }]]>
       </add>
