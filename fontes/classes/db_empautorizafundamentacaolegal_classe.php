@@ -30,5 +30,22 @@ class cl_empautorizafundamentacaolegal extends DAOBasica {
   public function __construct() {
     parent::__construct("plugins.empautorizafundamentacaolegal");
   }
+  
+  public function sql_query_fundamentacao($iEmpAutoriza=null, $sCampos = "*", $sWhere = null, $sOrder=null) {
+  	 
+  	$sSql = "select {$sCampos}
+  	from plugins.empautorizafundamentacaolegal
+  	inner join plugins.fundamentacaolegal on fundamentacaolegal.sequencial = empautorizafundamentacaolegal.fundamentacaolegal
+  	where {$sWhere}";
+  	if ($iEmpAutoriza!="") {
+  		if ($sWhere!="") {
+  			$sSql .= " and ";
+  		}
+  		$sSql .= " empautoriza = {$iEmpAutoriza} ";
+  	}
+  	$sSql .= $sOrder;
+  	 
+  	return $sSql;
+  }  
 
 }
