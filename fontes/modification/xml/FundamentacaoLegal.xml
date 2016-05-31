@@ -178,10 +178,10 @@
   <file path='emp4_empempenho004.php'>
 
     <operation>
-      <search regex="true"><![CDATA[(\$erro_msg\s*=\s*\"Erro ao.*;\s*\n*\$sqlerro\s*=\s*true;\s*\n*}\s*\n*})]]></search>
+      <!--<search regex="true"><![CDATA[(\$erro_msg\s*=\s*\"Erro ao.*;\s*\n*\$sqlerro\s*=\s*true;\s*\n*}\s*\n*})]]></search>-->
+      <search regex="true"><![CDATA[(db_fim_transacao\(\$sqlerro\);)]]></search>
       <add>
-        <![CDATA[$1
-
+        <![CDATA[
     if(!$sqlerro) {
 
       $sSqlEmpAutiDot = $clempautidot->sql_query_file(null, "e56_coddot", null, "e56_autori = {$e55_autori}");
@@ -212,10 +212,30 @@
         $erro_msg = "Não será possível empenhar a despesa, tendo em vista que o limite para o exercício já foi
 atingido. Saldo restante: ".$saldoDisponivel;;
       }
-    }]]>
+    }
+    $1]]>
       </add>
     </operation>    
+  </file>
 
+  <file path='fpdf151/impmodelos/mod_imprime6.php'>
+    <operation>
+      <search regex="true" ><![CDATA[(\$this->objpdf->text\s*\(\s*\$xcol.*,\s*"Característica Peculiar"\s*\)\s*;)]]></search>
+      <add>
+        <![CDATA[$this->objpdf->text($xcol +2, $xlin +51, "Fund Legal");]]>
+      </add>
+    </operation>
+    <operation>
+      <search regex="true" ><![CDATA[(\$this->objpdf->text\s*\(\s*\$xcol.*\$this->cod_concarpeculiar\s*\.\s*"\s*-\s*"\s*\.\s*\$this->descr_concarpeculiar\s*\)\s*;)]]></search>
+      <add>
+        <![CDATA[
+        $oDaoFundamentacaoLegal = db_utils::getDao("empautorizafundamentacaolegal");
+        $rsFundamentacaoLegal = $oDaoFundamentacaoLegal->sql_record($oDaoFundamentacaoLegal->sql_query_fundamentacao($this->numaut));
+        $oFundamentacaoLegal = db_utils::fieldsMemory($rsFundamentacaoLegal,0);
+        $this->objpdf->text($xcol +17, $xlin +51, ":  ".substr($oFundamentacaoLegal->descricao, 0, 53));
+        ]]>
+      </add>
+    </operation>
   </file>
 
 </modification>
