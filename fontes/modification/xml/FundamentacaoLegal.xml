@@ -178,42 +178,55 @@
   <file path='emp4_empempenho004.php'>
 
     <operation>
-      <!--<search regex="true"><![CDATA[(\$erro_msg\s*=\s*\"Erro ao.*;\s*\n*\$sqlerro\s*=\s*true;\s*\n*}\s*\n*})]]></search>-->
-      <search regex="true"><![CDATA[(db_fim_transacao\(\$sqlerro\);)]]></search>
+      <search regex="true"><![CDATA[(\$erro_msg\s*=\s*\"Erro ao.*;\s*\n*\$sqlerro\s*=\s*true;\s*\n*}\s*\n*})]]></search>
+      <!--<search regex="true"><![CDATA[(db_fim_transacao\(\$sqlerro\);)]]></search>-->
       <add>
-        <![CDATA[
+        <![CDATA[$1
     if(!$sqlerro) {
-
-      $sSqlEmpAutiDot = $clempautidot->sql_query_file(null, "e56_coddot", null, "e56_autori = {$e55_autori}");
-      $rsEmpAutiDot   = $clempautidot->sql_record($sSqlEmpAutiDot);
-      $iCodDot    = db_utils::fieldsMemory($rsEmpAutiDot, 0)->e56_coddot;
 
       $oDaoEmpAutorizaFundamentacaoLegal = db_utils::getDao("empautorizafundamentacaolegal");
       $rsEmpAutorizaFundamentacaoLegal   = $oDaoEmpAutorizaFundamentacaoLegal->sql_record($oDaoEmpAutorizaFundamentacaoLegal->sql_query_file(null, "plugins.empautorizafundamentacaolegal.fundamentacaolegal", null, " empautoriza = {$e55_autori}"));
-      $fundamentacaolegal                = db_utils::fieldsMemory($rsEmpAutorizaFundamentacaoLegal, 0)->fundamentacaolegal;
-
-      $oDaoDotacao = db_utils::getDao('orcdotacao');
-      $rsDotacao   = $oDaoDotacao->sql_record($oDaoDotacao->sql_query_file(db_getsession('DB_anousu'), $iCodDot));
-      $oDotacao    = db_utils::fieldsMemory($rsDotacao, 0);
-
-      $sWhere = "plugins.fundamentacaolegaldesdobramentos.fundamentacaolegal = {$fundamentacaolegal}
-             and plugins.fundamentacaolegaldesdobramentos.orgao       = {$oDotacao->o58_orgao}
-             and plugins.fundamentacaolegaldesdobramentos.unidade     = {$oDotacao->o58_unidade}
-             and plugins.fundamentacaolegaldesdobramentos.orcelemento = {$e55_codele}";
-
-      $oDaoFundamentacaoLegalDesdobramentos = db_utils::getDao("fundamentacaolegaldesdobramentos");
-      $totalEmpenhadoFundamentacao = $oDaoFundamentacaoLegalDesdobramentos->totalempenhadodesdobramento(null, $sWhere);
-      $resultFundamentacao = $oDaoFundamentacaoLegalDesdobramentos->sql_record($oDaoFundamentacaoLegalDesdobramentos->sql_query_file(null, "valorlimite", "", $sWhere));
-      $valorLimiteFundamentacao = db_utils::fieldsMemory($resultFundamentacao, 0)->valorlimite;
-
-      if(!empty($totalEmpenhadoFundamentacao) && !empty($valorLimiteFundamentacao) && ($totalEmpenhadoFundamentacao > $valorLimiteFundamentacao)) {
-        $sqlerro = true;
-        $saldoDisponivel = $valorLimiteFundamentacao - ($totalEmpenhadoFundamentacao - $e60_vlremp);
-        $erro_msg = "Não será possível empenhar a despesa, tendo em vista que o limite para o exercício já foi
-atingido. Saldo restante: ".$saldoDisponivel;;
+      if ($oDaoEmpAutorizaFundamentacaoLegal->numrows > 0) {
+        $fundamentacaolegal                = db_utils::fieldsMemory($rsEmpAutorizaFundamentacaoLegal, 0)->fundamentacaolegal;
       }
-    }
-    $1]]>
+
+      if (isset($fundamentacaolegal)) {
+        $sSqlEmpAutiDot = $clempautidot->sql_query_file(null, "e56_coddot", null, "e56_autori = {$e55_autori}");
+        $rsEmpAutiDot   = $clempautidot->sql_record($sSqlEmpAutiDot);
+        if ($clempautidot->numrows > 0) {
+          $iCodDot    = db_utils::fieldsMemory($rsEmpAutiDot, 0)->e56_coddot;
+        }
+
+        $oDaoDotacao = db_utils::getDao('orcdotacao');
+        $rsDotacao   = $oDaoDotacao->sql_record($oDaoDotacao->sql_query_file(db_getsession('DB_anousu'), $iCodDot));
+        if ($oDaoDotacao->numrows > 0) {
+          $oDotacao    = db_utils::fieldsMemory($rsDotacao, 0);
+
+          $sWhere = "plugins.fundamentacaolegaldesdobramentos.fundamentacaolegal = {$fundamentacaolegal}
+                 and plugins.fundamentacaolegaldesdobramentos.orgao              = {$oDotacao->o58_orgao}
+                 and plugins.fundamentacaolegaldesdobramentos.unidade            = {$oDotacao->o58_unidade}
+                 and plugins.fundamentacaolegaldesdobramentos.orcelemento        = {$e55_codele}";
+        }
+
+        $oDaoFundamentacaoLegalDesdobramentos = db_utils::getDao("fundamentacaolegaldesdobramentos");
+        $totalEmpenhadoFundamentacao = $oDaoFundamentacaoLegalDesdobramentos->totalempenhadodesdobramento(null, $sWhere);
+        $resultFundamentacao = $oDaoFundamentacaoLegalDesdobramentos->sql_record($oDaoFundamentacaoLegalDesdobramentos->sql_query_file(null, "valorlimite", "", $sWhere));
+        if ($oDaoFundamentacaoLegalDesdobramentos->numrows > 0) {
+          $valorLimiteFundamentacao = db_utils::fieldsMemory($resultFundamentacao, 0)->valorlimite;
+        }
+
+        if(!empty($totalEmpenhadoFundamentacao) && !empty($valorLimiteFundamentacao) && ($totalEmpenhadoFundamentacao > $valorLimiteFundamentacao)) {
+          $sqlerro = true;
+          $saldoDisponivel = $valorLimiteFundamentacao - ($totalEmpenhadoFundamentacao - $e60_vlremp);
+          $erro_msg = "Não será possível empenhar a despesa, tendo em vista que o limite para o exercício já foi atingido. Saldo restante: ".$saldoDisponivel;;
+        }
+
+      } else {
+        $sqlerro  = true;
+        $erro_msg = "É obrigatória a escolha de uma fundamentação legal no cadastro da autorização de empenho.";
+      }
+    
+    }]]>
       </add>
     </operation>    
   </file>
