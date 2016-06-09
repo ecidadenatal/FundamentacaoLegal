@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest>
-  <plugin name="SuprimentoDeFundos" label="Suprimento de Fundos" plugin-version="1.0" ecidade-version="2.3.47" id-modulo="398">
-    <id id="SuprimentoDeFundos"> </id>
+  <plugin name="FundamentacaoLegal" label="Fundamentação Legal" plugin-version="1.0" ecidade-version="2.3.47" id-modulo="398">
+    <id id="FundamentacaoLegal"> </id>
     <files>
 
       <!-- classe -->

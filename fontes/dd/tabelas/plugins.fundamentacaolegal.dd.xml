@@ -18,22 +18,6 @@
            hassequence="t">
       <sequence name="plugins.fundamentacaolegal_sequencial_seq"></sequence>
     </field>
-    <field name="modalidade"
-           conteudo="int4"
-           description="Modalidade"
-           inivalue="0"
-           label="Modalidade"
-           size="10"
-           null="f"
-           uppercase="f"
-           autocompl="f"
-           aceitatipo="1"
-           tipoobj="text"
-           labelrel="Modalidade"
-           reference=""
-           ispk="f"
-           hassequence="f">
-    </field>
     <field name="descricao"
            conteudo="varchar"
            description="Descrição"

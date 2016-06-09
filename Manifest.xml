@@ -12,6 +12,7 @@
       <!-- dd -->
       <file name="plugins.empautorizafundamentacaolegal.dd.xml"    path="/dd/tabelas/plugins.empautorizafundamentacaolegal.dd.xml" />
       <file name="plugins.fundamentacaolegal.dd.xml"               path="/dd/tabelas/plugins.fundamentacaolegal.dd.xml" />
+      <file name="plugins.fundamentacaolegalmodalidade.dd.xml"               path="/dd/tabelas/plugins.fundamentacaolegalmodalidade.dd.xml" />
       <file name="plugins.fundamentacaolegaldesdobramentos.dd.xml" path="/dd/tabelas/plugins.fundamentacaolegaldesdobramentos.dd.xml" />
 
       <!-- outro -->

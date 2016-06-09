@@ -1,0 +1,57 @@
+<?xml version="1.0" standalone="yes" ?>
+<table name="plugins.fundamentacaolegalmodalidade" description="Relacionamento entre fundamentação legal e modalidade" prefix="" label="Fundamentação legal modalidade" type="0">
+  <fields>
+    <field name="sequencial"
+           conteudo="int4"
+           description="Sequencial"
+           inivalue="0"
+           label="Sequencial"
+           size="10"
+           null="f"
+           uppercase="f"
+           autocompl="f"
+           aceitatipo="1"
+           tipoobj="text"
+           labelrel="Sequencial"
+           reference=""
+           ispk="t"
+           hassequence="t">
+      <sequence name="plugins.fundamentacaolegalmodalidade_sequencial_seq"></sequence>
+    </field>
+    <field name="fundamentacaolegal"
+           conteudo="int4"
+           description="Fundamentação Legal"
+           inivalue="0"
+           label="Fundamentação Legal"
+           size="10"
+           null="f"
+           uppercase="f"
+           autocompl="f"
+           aceitatipo="1"
+           tipoobj="text"
+           labelrel="Fundamentação Legal"
+           reference=""
+           ispk="f"
+           hassequence="f">
+    </field>
+    <field name="modalidade"
+           conteudo="int4"
+           description="Modalidade"
+           inivalue="0"
+           label="Modalidade"
+           size="10"
+           null="f"
+           uppercase="f"
+           autocompl="f"
+           aceitatipo="1"
+           tipoobj="text"
+           labelrel="Modalidade"
+           reference=""
+           ispk="f"
+           hassequence="f">
+    </field>
+  </fields>
+  <primarykey>
+    <fieldpk name="sequencial"></fieldpk>
+  </primarykey>
+</table>

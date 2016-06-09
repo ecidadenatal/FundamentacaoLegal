@@ -74,7 +74,9 @@
     <td>
       <?
         $oDaoFundamentacaoLegal = db_utils::getDao("fundamentacaolegal");
-        $rsFundamentacaoLegal = $oDaoFundamentacaoLegal->sql_record($oDaoFundamentacaoLegal->sql_query_file(null, "sequencial,descricao", null, "modalidade = (select l03_codigo from cflicita where l03_instit = ".db_getsession("DB_instit")." and l03_tipo = '{$e54_tipol}')"));
+        $rsFundamentacaoLegal = $oDaoFundamentacaoLegal->sql_record($oDaoFundamentacaoLegal->sql_query_file(null, "sequencial,descricao", null, "sequencial in (select fundamentacaolegal from cflicita
+                                inner join plugins.fundamentacaolegalmodalidade on modalidade = l03_codigo
+                              where l03_instit = ".db_getsession("DB_instit")." and l03_tipo = '{$e54_tipol}')"));
         if (!isset($e54_tipol)) {
           $rsFundamentacaoLegal = $oDaoFundamentacaoLegal->sql_record($oDaoFundamentacaoLegal->sql_query_file(null, "sequencial,descricao"));
         }
@@ -218,7 +220,7 @@
         if(!empty($totalEmpenhadoFundamentacao) && !empty($valorLimiteFundamentacao) && ($totalEmpenhadoFundamentacao > $valorLimiteFundamentacao)) {
           $sqlerro = true;
           $saldoDisponivel = $valorLimiteFundamentacao - ($totalEmpenhadoFundamentacao - $e60_vlremp);
-          $erro_msg = "Não será possível empenhar a despesa, tendo em vista que o limite para o exercício já foi atingido. Saldo restante: ".$saldoDisponivel;;
+          $erro_msg = "Não será possível empenhar a despesa, tendo em vista que o limite para o exercício já foi atingido. Saldo restante: ".$saldoDisponivel;
         }
 
       } else {
@@ -251,4 +253,48 @@
     </operation>
   </file>
 
+  <file path='emp2_relempenho011.php'>
+    <operation>
+      <search regex="true" flag="U"><![CDATA[(db_select\s*\("emptipo.*1\);((\n*.*)*)\<\/tr\>)]]></search>
+      <add>
+        <![CDATA[$1
+        <tr>
+          <td><strong>Fundamentação Legal:</strong></td>
+          <td>
+            <?
+              $oDaoFundamentacaoLegal = db_utils::getDao('fundamentacaolegal');
+              $rsFundamentacaoLegal = $oDaoFundamentacaoLegal->sql_record($oDaoFundamentacaoLegal->sql_query());
+              $aFundamentacoes = array();
+              $aFundamentacoes[0] = "Todos";
+              for ($iRowTipo = 0; $iRowTipo < $oDaoFundamentacaoLegal->numrows; $iRowTipo++) {
+
+                $oStdFundamentacao = db_utils::fieldsMemory($rsFundamentacaoLegal, $iRowTipo);
+                $aFundamentacoes[$oStdFundamentacao->sequencial] = $oStdFundamentacao->descricao;
+              }
+              db_select("fundamentacao",$aFundamentacoes,true,1);
+            ?>
+          </td>
+        </tr>
+        ]]>
+      </add>
+    </operation>
+  </file>
+
+  <file path='emp2_relempenho002.php'>
+    <operation>
+      <search regex="true" ><![CDATA[(\$txt_where\s*\.=.*\$sValoresEmpenho.*;)]]></search>
+      <add>
+        <![CDATA[$1
+
+if (isset($fundamentacao) && $fundamentacao > 0) {
+  $txt_where .= " and e60_numemp in (select e61_numemp 
+                    from empautoriza
+                      inner join empempaut on e61_autori = e54_autori
+                      inner join plugins.empautorizafundamentacaolegal on empautoriza = e61_autori
+                    where fundamentacaolegal = {$fundamentacao})";
+}
+]]>
+      </add>
+    </operation>
+  </file>
 </modification>
