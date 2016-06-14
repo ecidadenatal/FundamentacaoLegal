@@ -7,6 +7,13 @@
   <file path='forms/db_frmempautoriza.php'>
 
     <operation>
+      <search regex="true" flag="U"><![CDATA[(\<tr\>\n*\s*\<td.*e54_tipol((\n*.*)*)\<\/tr\>)]]></search>
+      <add>
+        <![CDATA[]]>
+      </add>
+    </operation> 
+
+    <operation>
       <search regex="true"><![CDATA[(\#e54_codcomdescr)]]></search>
       <add>
         <![CDATA[$1,
@@ -124,13 +131,21 @@
 
   </file>
 
-  <file path=' emp1_empautoriza005.php'>
+  <file path='emp1_empautoriza005.php'>
+
+    <operation>
+      <search regex="true"><![CDATA[(include\s*\(.*db_frmempautoriza.php.*\);)]]></search>
+      <add>
+        <![CDATA[include(modification("forms/db_frmempautoriza.php"));]]>
+      </add>
+    </operation>
 
     <operation>
       <search regex="true"><![CDATA[(db_fim_transacao\(\$sqlerro\);)]]></search>
       <add>
         <![CDATA[  if (!$sqlerro && !empty($fundamentacaolegal)) {
 
+    $oDaoAlteraEmpAutFundamentacao  = db_utils::getDao("empautorizafundamentacaolegal");
     $oDaoFundamentacao   = db_utils::getDao("empautorizafundamentacaolegal");
     $sWhereFundamentacao = " empautoriza = {$e54_autori}";
     $sSqlFundamentacao   = $oDaoFundamentacao->sql_query_file(null,
@@ -140,16 +155,18 @@
     $rsFundamentacao     = $oDaoFundamentacao->sql_record($sSqlFundamentacao);
     if ($oDaoFundamentacao->numrows > 0) {
       $sequencial = db_utils::fieldsMemory($rsFundamentacao, 0)->sequencial;
+      $oDaoAlteraEmpAutFundamentacao->sequencial          = $sequencial;
+      $oDaoAlteraEmpAutFundamentacao->empautoriza         = $e54_autori;
+      $oDaoAlteraEmpAutFundamentacao->fundamentacaolegal  = $fundamentacaolegal;
+      $oDaoAlteraEmpAutFundamentacao->alterar($sequencial);
+    } else {
+      $oDaoAlteraEmpAutFundamentacao->sequencial         = null;
+      $oDaoAlteraEmpAutFundamentacao->empautoriza        = $e54_autori;
+      $oDaoAlteraEmpAutFundamentacao->fundamentacaolegal = $fundamentacaolegal;
+      $oDaoAlteraEmpAutFundamentacao->incluir(null);
     }
-    
-    $oDaoAlteraEmpAutFundamentacao  = db_utils::getDao("empautorizafundamentacaolegal");
-    $oDaoAlteraEmpAutFundamentacao->sequencial          = $sequencial;
-    $oDaoAlteraEmpAutFundamentacao->empautoriza         = $e54_autori;
-    $oDaoAlteraEmpAutFundamentacao->fundamentacaolegal  = $fundamentacaolegal;
-    $oDaoAlteraEmpAutFundamentacao->alterar($sequencial);
 
     if ($oDaoAlteraEmpAutFundamentacao->erro_status == 0) {
-  
       $sqlerro  = true;
       $erro_msg = $oDaoAlteraEmpAutFundamentacao->erro_msg;
     }
