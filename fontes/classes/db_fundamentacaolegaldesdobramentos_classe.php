@@ -36,6 +36,7 @@ class cl_fundamentacaolegaldesdobramentos extends DAOBasica {
     $sSql  = " SELECT SUM(coalesce(e60_vlremp, 0) - coalesce(e60_vlranu, 0)) as valor ";
 	  $sSql .= " FROM plugins.empautorizafundamentacaolegal";
 	  $sSql .= " 	INNER JOIN empautoriza ON e54_autori = empautoriza";
+    $sSql .= "  INNER JOIN empautitem  ON e55_autori = e54_autori";
 	  $sSql .= " 	INNER JOIN empempaut   ON e61_autori = e54_autori";
 	  $sSql .= " 	INNER JOIN empempenho  ON e60_numemp = e61_numemp";
 	  $sSql .= " 	INNER JOIN plugins.fundamentacaolegal ON plugins.fundamentacaolegal.sequencial = plugins.empautorizafundamentacaolegal.fundamentacaolegal";
@@ -50,6 +51,7 @@ class cl_fundamentacaolegaldesdobramentos extends DAOBasica {
     if (!empty($sWhere)) {
       $sSql .= " and {$sWhere} ";
     }
+    
     $rsSaldoDesdobramento = db_query($sSql);
     $nSaldoDesdobramento  = db_utils::fieldsMemory($rsSaldoDesdobramento, 0)->valor;
 
