@@ -33,25 +33,30 @@ class cl_fundamentacaolegaldesdobramentos extends DAOBasica {
 
   public function totalempenhadodesdobramento($iEmpAutorizaFundamentacaoLegal = null, $sWhere = null) {
 
-    $sSql  = " SELECT SUM(coalesce(e60_vlremp, 0) - coalesce(e60_vlranu, 0)) as valor ";
-	  $sSql .= " FROM plugins.empautorizafundamentacaolegal";
-	  $sSql .= " 	INNER JOIN empautoriza ON e54_autori = empautoriza";
+    $sSql  = " SELECT (SUM(coalesce(e55_vlrun, 0)) - coalesce(e60_vlranu, 0)) as valor ";
+    $sSql .= " FROM plugins.empautorizafundamentacaolegal";
+    $sSql .= "  INNER JOIN empautoriza ON e54_autori = empautoriza";
+    $sSql .= "  INNER JOIN empempaut   ON e61_autori = e54_autori";
     $sSql .= "  INNER JOIN empautitem  ON e55_autori = e54_autori";
-	  $sSql .= " 	INNER JOIN empempaut   ON e61_autori = e54_autori";
-	  $sSql .= " 	INNER JOIN empempenho  ON e60_numemp = e61_numemp";
-	  $sSql .= " 	INNER JOIN plugins.fundamentacaolegal ON plugins.fundamentacaolegal.sequencial = plugins.empautorizafundamentacaolegal.fundamentacaolegal";
-	  $sSql .= " 	INNER JOIN plugins.fundamentacaolegaldesdobramentos ON plugins.fundamentacaolegaldesdobramentos.fundamentacaolegal = plugins.fundamentacaolegal.sequencial";
-	  $sSql .= "  INNER JOIN orcdotacao  ON o58_coddot = e60_coddot and o58_anousu = e60_anousu and o58_orgao = plugins.fundamentacaolegaldesdobramentos.orgao and o58_unidade = plugins.fundamentacaolegaldesdobramentos.unidade";
+    $sSql .= "  INNER JOIN empempenho  ON e60_numemp = e61_numemp";
+    $sSql .= "  INNER JOIN plugins.fundamentacaolegal ON fundamentacaolegal.sequencial = empautorizafundamentacaolegal.fundamentacaolegal";
+    $sSql .= "  INNER JOIN plugins.fundamentacaolegaldesdobramentos ON fundamentacaolegaldesdobramentos.fundamentacaolegal = fundamentacaolegal.sequencial
+                                      and fundamentacaolegaldesdobramentos.orcelemento = e55_codele";
+    $sSql .= "  INNER JOIN orcdotacao  ON o58_coddot = e60_coddot  
+                                      and o58_anousu = e60_anousu  
+                                      and o58_orgao = fundamentacaolegaldesdobramentos.orgao  
+                                      and o58_unidade = fundamentacaolegaldesdobramentos.unidade";
     $sSql .= " WHERE 1=1 ";
     
     if(!empty($iEmpAutorizaFundamentacaoLegal)){
-     	$sSql .= "and plugins.empautorizafundamentacaolegal.sequencial = {$iEmpAutorizaFundamentacaoLegal} ";
+      $sSql .= "and plugins.empautorizafundamentacaolegal.sequencial = {$iEmpAutorizaFundamentacaoLegal} ";
     }
-	  $sWhere = trim($sWhere);
+    $sWhere = trim($sWhere);
     if (!empty($sWhere)) {
       $sSql .= " and {$sWhere} ";
     }
-    
+    $sSql .= " GROUP BY e60_numemp";
+
     $rsSaldoDesdobramento = db_query($sSql);
     $nSaldoDesdobramento  = db_utils::fieldsMemory($rsSaldoDesdobramento, 0)->valor;
 

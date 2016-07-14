@@ -224,12 +224,12 @@
           $sWhere = "plugins.fundamentacaolegaldesdobramentos.fundamentacaolegal = {$fundamentacaolegal}
                  and plugins.fundamentacaolegaldesdobramentos.orgao              = {$oDotacao->o58_orgao}
                  and plugins.fundamentacaolegaldesdobramentos.unidade            = {$oDotacao->o58_unidade}
-                 and plugins.fundamentacaolegaldesdobramentos.orcelemento        = {$e55_codele}
-                 and empautitem.e55_codele = {$e55_codele}";
+                 and plugins.fundamentacaolegaldesdobramentos.orcelemento        = {$e55_codele}";
+          $sWhereDesdobramento = $sWhere." and empautitem.e55_codele = {$e55_codele}";
         }
 
         $oDaoFundamentacaoLegalDesdobramentos = db_utils::getDao("fundamentacaolegaldesdobramentos");
-        $totalEmpenhadoFundamentacao = $oDaoFundamentacaoLegalDesdobramentos->totalempenhadodesdobramento(null, $sWhere);
+        $totalEmpenhadoFundamentacao = $oDaoFundamentacaoLegalDesdobramentos->totalempenhadodesdobramento(null, $sWhereDesdobramento);
         $resultFundamentacao = $oDaoFundamentacaoLegalDesdobramentos->sql_record($oDaoFundamentacaoLegalDesdobramentos->sql_query_file(null, "valorlimite", "", $sWhere));
         if ($oDaoFundamentacaoLegalDesdobramentos->numrows > 0) {
           $valorLimiteFundamentacao = db_utils::fieldsMemory($resultFundamentacao, 0)->valorlimite;
