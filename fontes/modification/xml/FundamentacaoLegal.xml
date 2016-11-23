@@ -224,7 +224,8 @@
           $sWhere = "plugins.fundamentacaolegaldesdobramentos.fundamentacaolegal = {$fundamentacaolegal}
                  and plugins.fundamentacaolegaldesdobramentos.orgao              = {$oDotacao->o58_orgao}
                  and plugins.fundamentacaolegaldesdobramentos.unidade            = {$oDotacao->o58_unidade}
-                 and plugins.fundamentacaolegaldesdobramentos.orcelemento        = {$e55_codele}";
+                 and plugins.fundamentacaolegaldesdobramentos.orcelemento        = {$e55_codele}
+                 and exists(select 1 from plugins.fundamentacaolegal where sequencial = {$fundamentacaolegal} and validasaldo = 't')";
           $sWhereDesdobramento = $sWhere." and empautitem.e55_codele = {$e55_codele}";
         }
 
