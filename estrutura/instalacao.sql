@@ -1,5 +1,6 @@
 create table plugins.fundamentacaolegal (
 sequencial integer,
+modalidade integer,
 descricao varchar(200),
 lei varchar(10),
 artigo varchar(10),
@@ -36,19 +37,6 @@ empautoriza integer,
 fundamentacaolegal integer);
 
 CREATE SEQUENCE plugins.empautorizafundamentacaolegal_sequencial_seq
-INCREMENT 1
-MINVALUE 1
-MAXVALUE 9223372036854775807
-START 1
-CACHE 1;
-
-create table plugins.fundamentacaolegalmodalidade (
-sequencial integer,
-fundamentacaolegal integer, 
-modalidade integer
-);
-
-CREATE SEQUENCE plugins.fundamentacaolegalmodalidade_sequencial_seq
 INCREMENT 1
 MINVALUE 1
 MAXVALUE 9223372036854775807

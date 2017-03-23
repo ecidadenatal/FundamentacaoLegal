@@ -191,6 +191,13 @@
   }]]>
       </add>
     </operation>
+    
+    <operation>
+      <search><![CDATA[include("forms/db_frmempautoriza.php");]]></search>
+      <add>
+        <![CDATA[include(modification("forms/db_frmempautoriza.php"));]]>
+      </add>
+    </operation>
 
   </file>
 
@@ -198,7 +205,6 @@
 
     <operation>
       <search regex="true"><![CDATA[(\$erro_msg\s*=\s*\"Erro ao.*;\s*\n*\$sqlerro\s*=\s*true;\s*\n*}\s*\n*})]]></search>
-      <!--<search regex="true"><![CDATA[(db_fim_transacao\(\$sqlerro\);)]]></search>-->
       <add>
         <![CDATA[$1
     if(!$sqlerro) {
