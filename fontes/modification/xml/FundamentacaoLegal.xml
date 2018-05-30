@@ -134,13 +134,6 @@
   <file path='emp1_empautoriza005.php'>
 
     <operation>
-      <search regex="true"><![CDATA[(include\s*\(.*db_frmempautoriza.php.*\);)]]></search>
-      <add>
-        <![CDATA[include(modification("forms/db_frmempautoriza.php"));]]>
-      </add>
-    </operation>
-
-    <operation>
       <search regex="true"><![CDATA[(db_fim_transacao\(\$sqlerro\);)]]></search>
       <add>
         <![CDATA[  if (!$sqlerro && !empty($fundamentacaolegal)) {
@@ -192,13 +185,6 @@
       </add>
     </operation>
     
-    <operation>
-      <search><![CDATA[include("forms/db_frmempautoriza.php");]]></search>
-      <add>
-        <![CDATA[include(modification("forms/db_frmempautoriza.php"));]]>
-      </add>
-    </operation>
-
   </file>
 
   <file path='emp4_empempenho004.php'>
